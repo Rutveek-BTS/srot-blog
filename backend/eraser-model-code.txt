@@ -1,0 +1,53 @@
+users [icon: user, color: white] {
+  id string pk
+  fName string
+  lName string
+  uName string
+  email string
+  contactNo string
+  avatar string
+  coverImg string
+  savedBlog objectId[] blogs
+  refreshToken string
+  createdAt Date
+  updatedAt Date
+}
+
+blogs [icon: pencil, color: blue] {
+  id string pk
+  title string
+  content string
+  blogImages string[]
+  author objectId users
+  createdAt Date
+  updatedAt Date
+}
+
+comments [icon: comment, color: green] {
+  id string pk
+  content string
+  blog objectId blogs
+  commentBy objectId users
+  createdAt Date
+}
+
+likes [icon: thumbs-up, color: green] {
+  id string
+  blog objectId blogs
+  likedBy objectId users
+}
+
+follows [icon: plus-circle, color: purple] {
+  id string
+  blogger objectId users
+  follower objectId users
+}
+
+users.savedBlog <> blogs.id
+blogs.author - users.id
+comments.commentBy - users.id
+comments.blog - blogs.id
+likes.likedBy - users.id
+likes.blog - blogs.id
+follows.blogger - users.id
+follows.follower - users.id
