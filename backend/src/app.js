@@ -18,6 +18,6 @@ app.use(express.urlencoded({ // Used to receive data from URL
     limit: '16kb' // Max size of data that is acceptable from the URL
 }))
 
-app.use(cookieParser())
+app.use(cookieParser()) // Stores and Retrieve Data from Client's Browser
 
 export { app }
