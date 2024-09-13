@@ -12,13 +12,13 @@ const userSchema = new Schema(
         },
         lName: {
             type: String,
-            required: true,
+            required: [true, "Last Name Required"],
             trim: true,
             index: true
         },
         uName: {
             type: String,
-            required: [true, "Last Name Required"],
+            required: [true, "User Name Required"],
             unique: true,
             lowercase: true,
             trim: true,
@@ -33,6 +33,7 @@ const userSchema = new Schema(
             index: true
         },
         password: {
+            type: String,
             required: [true, "Password Required"]
         },
         avatar: {
@@ -70,7 +71,7 @@ userSchema.methods.isPasswordCorrect = async function(password) {
 }
 
 userSchema.methods.generateAccessToken = async function(){
-    jwt.sign({
+    return jwt.sign({
         _id: this._id,
         uName: this.uName,
         email: this.email

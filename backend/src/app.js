@@ -20,4 +20,17 @@ app.use(express.urlencoded({ // Used to receive data from URL
 
 app.use(cookieParser()) // Stores and Retrieve Data from Client's Browser
 
+// Import Routes
+import userRouter from './routes/user.route.js';
+import blogRouter from './routes/blog.route.js';
+import followRouter from './routes/follow.route.js';
+import likeRouter from './routes/like.route.js';
+import commentRouter from './routes/comment.route.js';
+
+app.use('/api/v1/user/', userRouter);
+app.use('/api/v1/blog/', blogRouter);
+app.use('/api/v1/follow/', followRouter);
+app.use('/api/v1/like/', likeRouter);
+app.use('/api/v1/comment/', commentRouter);
+
 export { app }

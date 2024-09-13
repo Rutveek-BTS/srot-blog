@@ -18,6 +18,10 @@ const blogSchema = new Schema(
         author: {
             type: Schema.Types.ObjectId,
             ref: "User"
+        },
+        isPublished: {
+            type: Boolean,
+            default: true
         }
     },
     {
