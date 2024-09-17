@@ -19,7 +19,7 @@ router.route('/deleteblog/:blogid').delete(verifyJWT, deleteBlog);
 
 router.route('/updateblog/:blogid').patch(verifyJWT, updateBlog);
 router.route('/toggleblogpublish/:blogid').patch(verifyJWT, toggleBlogPublish);
-router.route('/bsave/:blogId').patch(verifyJWT, saveBlog)
-router.route('/bremove/:blogId').patch(verifyJWT, removeBlog)
+router.route('/bsave/:blogid').patch(verifyJWT, saveBlog)
+router.route('/bremove/:blogid').patch(verifyJWT, removeBlog)
 
 export default router;
