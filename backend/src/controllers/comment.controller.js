@@ -104,11 +104,65 @@ const updateComment = asyncHandler( async (req, res)=>{
 
     return res
     .status(200)
-    .json(200, comment, "Comment Update Successful")
+    .json(new apiResponse(200, comment, "Comment Update Successful"))
 })
 
 const getAllComment = asyncHandler( async (req, res)=>{
+    const {blogid} = req.params;
+
+    if(!isValidObjectId(blogid)){
+        throw new apiError(400, "Invalid Blog Id")
+    }
+
+    if(!req.user?._id){
+        throw new apiError(400, "No User Logged In")
+    }
+
+    const comments = await Comment.aggregate([
+        {
+            $match: {
+                blog: new mongoose.Types.ObjectId(blogid)
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'commentedBy',
+                foreignField: '_id',
+                as: 'commentedBy',
+                pipeline: [
+                    {
+                        $project: {
+                            uName: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                commentedBy: {
+                    $first: '$commentedBy'
+                }
+            }
+        },
+        {
+            $project: {
+                content: 1,
+                commentedBy: 1,
+                createdAt: 1
+            }
+        }
+    ])
+
+    if(!comments){
+        throw new apiError(500, "Something Went Wrong While Fetching Comments")
+    }
     
+    return res
+    .status(200)
+    .json(new apiResponse(200, comments, "Comments Fetched Successfully"))
 })
 
 export {addComment, deleteComment, updateComment, getAllComment};
