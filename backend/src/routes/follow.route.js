@@ -6,7 +6,7 @@ const router = Router();
 
 router.route('/togglefollow/:userid').post(verifyJWT, toggleFollow);
 
-router.route('/getallfollowers').get(verifyJWT, getAllFollowers);
-router.route('/getfollowing').get(verifyJWT, getAllFollowing);
+router.route('/getallfollowers/:userid').get(verifyJWT, getAllFollowers);
+router.route('/getfollowing/:userid').get(verifyJWT, getAllFollowing);
 
 export default router;

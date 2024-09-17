@@ -43,11 +43,102 @@ const toggleFollow = asyncHandler( async (req, res)=>{
 })
 
 const getAllFollowers = asyncHandler( async (req, res)=>{
+    const {userid} = req.params;
     
+    if(!isValidObjectId(userid)){
+        throw new apiError(400, "Invalid User Id")
+    }
+
+    if(!req.user?._id){
+        throw new apiError(400, "No User Logged In")
+    }
+
+    const followers = await Follow.aggregate([
+        {
+            $match: {
+                blogger: new mongoose.Types.ObjectId(userid)
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'follower',
+                foreignField: '_id',
+                as: 'followerDetails',
+                pipeline: [
+                    {
+                        $addFields: {
+                            followerDetails: {
+                                $first: '$followerDetails'
+                            }
+                        }
+                    },
+                    {
+                        $project: {
+                            uName: 1,
+                            fName: 1,
+                            lName: 1,
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        }
+    ])
+    
+    if(!followers){
+        throw new apiError(400, "Something Went Wrong While Fetching The Followers")
+    }
+
+    return res
+    .status(200)
+    .json(new apiResponse(200, followers, 'Followers Fetched Successfully'))
 })
 
 const getAllFollowing = asyncHandler( async (req, res)=>{
+    const {userid} = req.params;
     
+    if(!isValidObjectId(userid)){
+        throw new apiError(400, "Invalid User Id")
+    }
+
+    if(!req.user?._id){
+        throw new apiError(400, "No User Logged In")
+    }
+
+    const followings = await Follow.aggregate([
+        {
+            $match: {
+                follower: new mongoose.Types.ObjectId(userid)
+            }
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'blogger',
+                foreignField: '_id',
+                as: 'followingDetails',
+                pipeline: [
+                    {
+                        $project: {
+                            uName: 1,
+                            fName: 1,
+                            lName: 1, 
+                            avatar: 1
+                        }
+                    }
+                ]
+            }
+        }
+    ])
+
+    if(!followings){
+        throw new apiError(400, "Something Went Wrong While Fetching Followings")
+    }
+
+    return res
+    .status(200)
+    .json(new apiResponse(200, followings, "Followings Fetched Successfully"))
 })
 
 export {toggleFollow, getAllFollowers, getAllFollowing}
